@@ -157,6 +157,8 @@ public class BodySourceView : MonoBehaviour
         Transform shFootLeft = null;
         Transform shFootRight = null;
         Transform shHeadEnd = null;
+        Transform shHandTipRight = null;
+        Transform shHandTipLeft = null;
 
         if (shirt != null)
             foreach (Transform tr in shirt.transform)
@@ -371,6 +373,8 @@ public class BodySourceView : MonoBehaviour
         GameObject rightKnee = null;
         GameObject handLeft = null;
         GameObject handRight = null;
+        GameObject handTipLeft = null;
+        GameObject handTipRight = null;
         foreach(Transform tr in bodyObject.transform)
         {
             if (tr.name.Equals("ShoulderLeft"))
@@ -395,6 +399,7 @@ public class BodySourceView : MonoBehaviour
                 handLeft = tr.gameObject;
             if (tr.name.Equals("HandRight"))
                 handRight = tr.gameObject;
+
         }
 
         for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
