@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Autodesk_Cache_File>
+  <cacheType Type="OneFile"/>
+  <time Range="0-48000"/>
+  <cacheTimePerFrame TimePerFrame="240"/>
+  <cacheVersion Version="2.0"/>
+  <Channels>
+    <channel0 ChannelName="Objekt" ChannelType="FloatVectorArray" ChannelInterpretation="Points" SamplingType="Regular" SamplingRate="240" StartTime="0" EndTime="48000"/>
+  </Channels>
+</Autodesk_Cache_File>
