@@ -156,7 +156,7 @@ public class BodySourceView : MonoBehaviour
         Transform shAnkleRight = null;
         Transform shFootLeft = null;
         Transform shFootRight = null;
-
+        Transform shHeadEnd = null;
 
         if (shirt != null)
             foreach (Transform tr in shirt.transform)
@@ -225,6 +225,11 @@ public class BodySourceView : MonoBehaviour
                 if (name.Equals(assembName("Head")))
                 {
                     shHead = tr;
+                    foreach(Transform trCh in tr)
+                    {
+                        
+
+                    }
                 }
                 if (name.Equals(assembName("LeftLeg")))
                 {
@@ -246,7 +251,7 @@ public class BodySourceView : MonoBehaviour
         for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
         {
             GameObject jointObj;
-
+            
             if (jt == Kinect.JointType.Head)
             {
                 jointObj = Instantiate<GameObject>(headObj);
@@ -261,80 +266,79 @@ public class BodySourceView : MonoBehaviour
                 //jointObj.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             }
             Transform jointTr = jointObj.transform;
-            if(jt == Kinect.JointType.Head)
+            Transform mapTr = null;
+            if(jt == Kinect.JointType.Neck)
             {
-                shHead.parent = jointTr;
-                transformLocalPos(shHead);
+                mapTr = shHead;
             }
             else if(jt == Kinect.JointType.SpineShoulder)
             {
-                shNeck.parent = jointTr;
-                transformLocalPos(shNeck);
+                mapTr = shNeck;
             }
             else if(jt == Kinect.JointType.HipLeft)
             {
-                shLUpLeg.parent = jointTr;
-                transformLocalPos(shLUpLeg);
+                mapTr = shLUpLeg;
             }
             else if (jt == Kinect.JointType.HipRight)
             {
-                shRUpLeg.parent = jointTr;
-                transformLocalPos(shRUpLeg);
+                mapTr = shRUpLeg;
             }
             else if (jt == Kinect.JointType.ShoulderLeft)
             {
-                shRShould.parent = jointTr;
-                transformLocalPos(shRShould);
+                mapTr = shRShould;
             }
             else if (jt == Kinect.JointType.ShoulderRight)
             {
-                shLShould.parent = jointTr;
-                transformLocalPos(shLShould);
+                mapTr = shLShould;
             }
             else if(jt == Kinect.JointType.ElbowLeft)
             {
-                shRForeArm.parent = jointTr;
-                transformLocalPos(shRForeArm);
+                mapTr = shRForeArm;
             }
             else if(jt == Kinect.JointType.ElbowRight)
             {
-                shLForeArm.parent = jointTr;
-                transformLocalPos(shLForeArm);
+                mapTr = shLForeArm;
             }
             else if (jt == Kinect.JointType.SpineBase)
             {
-                shHips.parent = jointTr;
-                transformLocalPos(shHips);
+                mapTr = shHips;
             }
             else if(jt == Kinect.JointType.HandLeft)
             {
-                shRHand.parent = jointTr;
-                transformLocalPos(shRHand);
+                mapTr = shRHand;
             }
             else if(jt == Kinect.JointType.HandRight)
             {
-                shLHand.parent = jointTr;
-                transformLocalPos(shLHand);
+                mapTr = shLHand;
             }
             else if(jt == Kinect.JointType.KneeLeft)
             {
-                shkneeLeft.parent = jointTr;
-                transformLocalPos(shkneeLeft);
+                mapTr = shkneeLeft;
             }
             else if(jt == Kinect.JointType.KneeRight)
             {
-                shkneeRight.parent = jointTr;
-                transformLocalPos(shkneeRight);
+                mapTr = shkneeRight;
             }
             else if(jt == Kinect.JointType.AnkleLeft)
             {
-                shFootLeft.parent = jointTr;
-                transformLocalPos(shFootLeft);
+                
+            }
+            else if (jt == Kinect.JointType.FootRight)
+            {
+                mapTr = shFootRight;
+            }
+            else if(jt == Kinect.JointType.FootLeft)
+            {
+                mapTr = shFootLeft;
             }
             else if(jt == Kinect.JointType.AnkleRight)
             {
-                shFootRight.parent = jointTr;
-                transformLocalPos(shFootRight);
+                
+            }
+            if (mapTr != null)
+            {
+                mapTr.parent = jointTr;
+                transformLocalPos(mapTr);
             }
             jointObj.name = jt.ToString();
             jointObj.transform.parent = body.transform;
@@ -345,11 +349,15 @@ public class BodySourceView : MonoBehaviour
     
     private void transformLocalPos(Transform tr)
     {
+        Vector3 rot = Vector3.zero;
+        tr.localRotation = Quaternion.Euler(rot);
         Vector3 vec = tr.localPosition;
         vec.y = 0;
         tr.localPosition = Vector3.zero;
     }
 
+    public Vector3 RForeArmOffset = new Vector3(90, 180, 0);
+    public Vector3 LForeArmOffset = new Vector3(90, 180, 0);
     private void RefreshBodyObject(Kinect.Body body, GameObject bodyObject)
     {
         GameObject leftShoulder = null;
@@ -359,6 +367,10 @@ public class BodySourceView : MonoBehaviour
         GameObject hipLeft = null;
         GameObject hipRight = null;
         GameObject spineBase = null;
+        GameObject leftKnee = null;
+        GameObject rightKnee = null;
+        GameObject handLeft = null;
+        GameObject handRight = null;
         foreach(Transform tr in bodyObject.transform)
         {
             if (tr.name.Equals("ShoulderLeft"))
@@ -375,20 +387,21 @@ public class BodySourceView : MonoBehaviour
                 hipRight = tr.gameObject;
             if (tr.name.Equals("SpineBase"))
                 spineBase = tr.gameObject;
+            if (tr.name.Equals("KneeLeft"))
+                leftKnee = tr.gameObject;
+            if (tr.name.Equals("KneeRight"))
+                rightKnee = tr.gameObject;
+            if (tr.name.Equals("HandLeft"))
+                handLeft = tr.gameObject;
+            if (tr.name.Equals("HandRight"))
+                handRight = tr.gameObject;
         }
 
         for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
         {
             Kinect.Joint sourceJoint = body.Joints[jt];
             Kinect.Joint? targetJoint = null;
-            /*
-            if(jt == Kinect.JointType.SpineBase)
-            {
-                Vector3 pos = bodyObject.transform.position;
-                pos.z = -sourceJoint.Position.Z;
-                bodyObject.transform.position = pos;
-            }
-            */
+            
             
 
             if(_BoneMap.ContainsKey(jt))
@@ -396,57 +409,47 @@ public class BodySourceView : MonoBehaviour
                 targetJoint = body.Joints[_BoneMap[jt]];
             }
             Transform jointObj = bodyObject.transform.Find(jt.ToString());
-            /*
-            Vector3 pos = mapToColor(targetJoint.Value);
-            Debug.Log("Pos: " + pos);
-            pos.z = targetJoint.Value.Position.Z;
-            //pos.z = 0;
-            pos.x *= viewFactorX;
-            pos.y *= viewFactorY;
-
-            pos = cam.ScreenToViewportPoint(pos);
-            jointObj.localPosition = pos; */
 
             jointObj.localPosition = GetVector3FromJoint(sourceJoint);
             Quaternion rotation = ConvertJointQuaternionToUnityQuaterion(body, jt, false);
             if (jt == Kinect.JointType.Head)
                 rotation = ConvertJointQuaternionToUnityQuaterion(body, JointType.Neck, false);
             Vector3 rot = rotation.eulerAngles;
-            if (jt == Kinect.JointType.HipRight || jt == Kinect.JointType.HipLeft)
-                rot.z += 180;
+            
             rotation.eulerAngles = rot;
             jointObj.rotation = rotation;
-            
-
-            //LineRenderer lr = jointObj.GetComponent<LineRenderer>();
-            if(targetJoint.HasValue)
-            {
-                
-                
-                
-                //lr.SetPosition(0, GetVector3FromJoint(targetJoint.Value));
-                //lr.SetPosition(1, GetVector3FromJoint(targetJoint.Value));
-                //lr.SetColors(GetColorForState (sourceJoint.TrackingState), GetColorForState(targetJoint.Value.TrackingState));
-            }
-            else
-            {
-                //lr.enabled = false;
-            }
         }
-            Transform childL = leftShoulder.transform.GetChild(0);
-            Transform childLchild = childL.GetChild(0);
-            Transform childR = rightShoulder.transform.GetChild(0);
-            Transform childRchild = childR.GetChild(0);
-        //childLchild.LookAt(leftElbow.transform);
-        //childRchild.LookAt(rightElbow.transform);
-        Vector3 vecL = leftShoulder.transform.position - leftElbow.transform.position;
-        Quaternion lRot = Quaternion.LookRotation(vecL);
-        lRot.eulerAngles = new Vector3(360 - lRot.eulerAngles.x + 90, lRot.eulerAngles.y + 180, lRot.eulerAngles.z);
-        childLchild.rotation = lRot;
-        Vector3 vecR = rightShoulder.transform.position - rightElbow.transform.position;
-        Quaternion rRot = Quaternion.LookRotation(vecR);
-        rRot.eulerAngles = new Vector3(360  - rRot.eulerAngles.x + 90, rRot.eulerAngles.y + 180, rRot.eulerAngles.z);
-        childRchild.rotation = rRot;
+        Transform childL = leftShoulder.transform.GetChild(0);
+        Transform childLchild = childL.GetChild(0);
+        Transform childR = rightShoulder.transform.GetChild(0);
+        Transform childRchild = childR.GetChild(0);
+        Vector3 vecLShould = leftShoulder.transform.position - leftElbow.transform.position;
+        //vecLShould.x = -vecLShould.x;
+        Quaternion lShouldRot = Quaternion.LookRotation(vecLShould);
+        lShouldRot.eulerAngles = new Vector3(360 - lShouldRot.eulerAngles.x + 90, lShouldRot.eulerAngles.y + 180, lShouldRot.eulerAngles.z);
+        childLchild.rotation = lShouldRot;
+        //childLchild.rotation = getLookRotation(vecLShould, new Vector3(270, 180, 0));
+        Vector3 vecRShould = rightShoulder.transform.position - rightElbow.transform.position;
+        Quaternion rShouldRot = Quaternion.LookRotation(vecRShould);
+        rShouldRot.eulerAngles = new Vector3(360  - rShouldRot.eulerAngles.x + 90, rShouldRot.eulerAngles.y + 180, rShouldRot.eulerAngles.z);
+        childRchild.rotation = rShouldRot;
+        //vecRShould.x = vecRShould.x;
+        //childLchild.rotation = getLookRotation(vecRShould, new Vector3(270, 180, 0));
+        Vector3 vecLFArm = leftElbow.transform.position - handLeft.transform.position;
+        Quaternion lFShouldRot = Quaternion.LookRotation(vecLFArm);
+        lFShouldRot.eulerAngles = new Vector3(360 - lFShouldRot.eulerAngles.x + LForeArmOffset.x, lFShouldRot.eulerAngles.y + LForeArmOffset.y, lFShouldRot.eulerAngles.z + LForeArmOffset.z);
+
+        Transform rElbowChild = leftElbow.transform.GetChild(0);
+        Vector3 vecRFArm = rightElbow.transform.position - handRight.transform.position;
+        Quaternion rFShouldRot = Quaternion.LookRotation(vecRFArm);
+        rFShouldRot.eulerAngles = new Vector3(360 - rFShouldRot.eulerAngles.x + RForeArmOffset.x, rFShouldRot.eulerAngles.y + RForeArmOffset.y, rFShouldRot.eulerAngles.z + RForeArmOffset.z);
+
+        leftElbow.transform.rotation = lFShouldRot;
+
+        
+        rightElbow.transform.rotation = rFShouldRot;
+
+        //Scale Shirt
         Vector3 upWidthVec = leftShoulder.transform.position - rightShoulder.transform.position;
         float upWidth = upWidthVec.magnitude;
         Vector3 bottomWidthVec = hipLeft.transform.position - hipRight.transform.position;
@@ -454,6 +457,13 @@ public class BodySourceView : MonoBehaviour
         Vector3 spineScale = spineBase.transform.localScale;
         spineScale.x = bottomWidth;
         spineBase.transform.localScale = spineScale;
+    }
+
+    Quaternion getLookRotation(Vector3 vec, Vector3 offset)
+    {
+        Quaternion lookRot = Quaternion.LookRotation(vec);
+        lookRot.eulerAngles = new Vector3(lookRot.eulerAngles.x + offset.x, lookRot.eulerAngles.y + offset.y, lookRot.eulerAngles.z + offset.z);
+        return lookRot;
     }
 
     static Quaternion ConvertJointQuaternionToUnityQuaterion(Kinect.Body body, Kinect.JointType jt, bool mirror = true)
