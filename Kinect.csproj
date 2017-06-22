@@ -289,6 +289,7 @@
     <Compile Include="Assets\Melting\Mega_Fiers\Mega-Fiers\Scripts\MegaGrab\DOFCamera.cs" />
     <Compile Include="Assets\Melting\Mega_Fiers\Mega-Fiers\Scripts\MegaGrab\JPGEncoder.cs" />
     <Compile Include="Assets\Melting\Mega_Fiers\Mega-Fiers\Scripts\MegaGrab\MegaGrab.cs" />
+    <Compile Include="Assets\Scripts\HandSwitch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Materials\DepthMask.shader" />

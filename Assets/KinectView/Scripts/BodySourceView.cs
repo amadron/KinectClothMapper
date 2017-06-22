@@ -13,10 +13,10 @@ public class BodySourceView : MonoBehaviour
     public GameObject headObj;
     public GameObject shirtObj;
     private string rigpref = "mixamorig:";
-
     private Dictionary<ulong, GameObject> _Bodies = new Dictionary<ulong, GameObject>();
     private BodySourceManager _BodyManager;
-    
+    private static float resFactorY;
+    private static float resFactorX;
 
     private Dictionary<Kinect.JointType, Kinect.JointType> _BoneMap = new Dictionary<Kinect.JointType, Kinect.JointType>()
     {
@@ -53,8 +53,10 @@ public class BodySourceView : MonoBehaviour
     private void Start()
     {
         _Sensor = Kinect.KinectSensor.GetDefault();
-        cam = GameObject.Find("OrtoCamera").GetComponent<Camera>();
-        
+        //cam = GameObject.Find("OrtoCamera").GetComponent<Camera>();
+        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        resFactorY = (float)Screen.height / 1080;
+        resFactorX = (float)Screen.width / 1920;
     }
 
 
@@ -133,7 +135,7 @@ public class BodySourceView : MonoBehaviour
         GameObject shirt = Instantiate<GameObject>(shirtObj);
         shirt.transform.parent = body.transform;
         shirt.transform.localPosition = Vector3.zero;
-        shirt.SetActive(true);
+        shirt.SetActive(false);
         Transform shNeck = null;
         Transform shHips = null;
         Transform shSpine = null;
@@ -263,9 +265,9 @@ public class BodySourceView : MonoBehaviour
             }
             else
             {
-                jointObj = new GameObject();
-                //jointObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                //jointObj.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                //jointObj = new GameObject();
+                jointObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                jointObj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             }
             Transform jointTr = jointObj.transform;
             Transform mapTr = null;
@@ -337,11 +339,13 @@ public class BodySourceView : MonoBehaviour
             {
                 
             }
+            
             if (mapTr != null)
             {
                 mapTr.parent = jointTr;
                 transformLocalPos(mapTr);
             }
+            
             jointObj.name = jt.ToString();
             jointObj.transform.parent = body.transform;
         }
@@ -415,7 +419,8 @@ public class BodySourceView : MonoBehaviour
             }
             Transform jointObj = bodyObject.transform.Find(jt.ToString());
 
-            jointObj.localPosition = GetVector3FromJoint(sourceJoint);
+            //jointObj.localPosition = GetVector3FromJoint(sourceJoint);
+            jointObj.localPosition = MapToColor(sourceJoint);
             Quaternion rotation = ConvertJointQuaternionToUnityQuaterion(body, jt, false);
             if (jt == Kinect.JointType.Head)
                 rotation = ConvertJointQuaternionToUnityQuaterion(body, JointType.Neck, false);
@@ -424,6 +429,7 @@ public class BodySourceView : MonoBehaviour
             rotation.eulerAngles = rot;
             jointObj.rotation = rotation;
         }
+        
         Transform childL = leftShoulder.transform.GetChild(0);
         Transform childLchild = childL.GetChild(0);
         Transform childR = rightShoulder.transform.GetChild(0);
@@ -455,13 +461,15 @@ public class BodySourceView : MonoBehaviour
         rightElbow.transform.rotation = rFShouldRot;
 
         //Scale Shirt
+        /*
         Vector3 upWidthVec = leftShoulder.transform.position - rightShoulder.transform.position;
         float upWidth = upWidthVec.magnitude;
         Vector3 bottomWidthVec = hipLeft.transform.position - hipRight.transform.position;
         float bottomWidth = bottomWidthVec.magnitude;
         Vector3 spineScale = spineBase.transform.localScale;
-        spineScale.x = bottomWidth;
+        spineScale.x = bottomWidth * 0.65f;
         spineBase.transform.localScale = spineScale;
+        */
     }
 
     Quaternion getLookRotation(Vector3 vec, Vector3 offset)
@@ -502,11 +510,31 @@ public class BodySourceView : MonoBehaviour
             return Color.black;
         }
     }
-    
-    private static Vector3 mapToColor(Kinect.Joint joint)
+
+    private static Vector3 MapToColor(Kinect.Joint joint)
     {
+        //Joint Pos to Color Coordinates
         ColorSpacePoint colorPoint = _Sensor.CoordinateMapper.MapCameraPointToColorSpace(joint.Position);
-        return new Vector3(colorPoint.X, colorPoint.Y);
+        if(float.IsInfinity(colorPoint.X))
+        {
+            colorPoint.X = 0;
+        }
+        if(float.IsInfinity(colorPoint.Y))
+        {
+            colorPoint.Y = 0;
+        }
+        
+        Vector3 vec = new Vector3(colorPoint.X, colorPoint.Y, 0);
+        //Color Coordinates to actual Screensize/ Pos
+        vec.x *= resFactorX;
+        vec.y *= resFactorY;
+        //to do: actual ScreenPos to Viewport Pos
+        vec.x = vec.x / Screen.width;
+        vec.y = 1 - vec.y / Screen.height;
+        // Viewport Pos to 3d Space
+        vec.z = joint.Position.Z * 10;
+        vec = cam.ViewportToWorldPoint(vec);
+        return vec;
     }
 
     private static Vector3 GetVector3FromJoint(Kinect.Joint joint)
