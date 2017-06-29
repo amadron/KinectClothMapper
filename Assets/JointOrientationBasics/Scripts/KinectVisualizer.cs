@@ -10,7 +10,7 @@ namespace JointOrientationBasics
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
-
+   
     public class KinectVisualizer
         : MonoBehaviour
     {
@@ -38,7 +38,7 @@ namespace JointOrientationBasics
         public bool DrawJoint = true;
         public bool DrawBoneModel = true;
         public bool DebugLines = true;
-
+        public GameObject shirt;
         /// <summary>
         /// visual skeleton of bone meshs
         /// </summary>
@@ -229,13 +229,12 @@ namespace JointOrientationBasics
             {
                 return;
             }
-
+            
             // create bone structure for the joint
             // need a parent to ensure the length is calculated correctly
             if(joint.Parent != null)
             {
                 Bone bone = new Bone();
-
                 // create a joint visual
                 bone.JointMesh = (GameObject)Instantiate(this.JointModel);
                 bone.JointMesh.name = string.Format("{0}", joint.Name);
@@ -247,7 +246,7 @@ namespace JointOrientationBasics
                 bone.BoneMesh.name = string.Format("{0}", joint.Name);
                 bone.BoneMesh.transform.localScale = this.BoneScale;
                 bone.BoneMesh.gameObject.transform.parent = this.VisualizerParent.gameObject.transform;
-
+                
                 // add to collection for the model
                 this.BodyModel.Add(joint.Name, bone);
             }
@@ -292,6 +291,122 @@ namespace JointOrientationBasics
             bone.transform.localScale = boneScale;
         }
 
+        void AddJoint(Joint joint, Bone bone)
+        {
+            Transform tr = null;
+            if(joint.Name.Equals("SpineMid"))
+            {
+                tr = getTransform("");
+            }
+            else if(joint.Name.Equals("SpineShoulder"))
+            {
+                tr = getTransform("Spine2");
+            }
+            else if(joint.Name.Equals("Neck"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("Head"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("ShoulderLeft"))
+            {
+                tr = getTransform("LeftShoulder");
+            }
+            else if (joint.Name.Equals("ElbowLeft"))
+            {
+                tr = getTransform("RightForeArm");
+            }
+            else if (joint.Name.Equals("WristLeft"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("HandLeft"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("HandTipLeft"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("ThumbLeft"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("ShoulderRight"))
+            {
+                tr = getTransform("RightShoulder");
+            }
+            else if (joint.Name.Equals("ElbowRight"))
+            {
+                tr = getTransform("LeftForeArm");
+            }
+            else if (joint.Name.Equals("WristRight"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("HandRight"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("HandTipRight"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("ThumRight"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("HipLeft"))
+            {
+                tr = getTransform("RightUpLeg");
+            }
+            else if (joint.Name.Equals("KneeLeft"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("AnkleLeft"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("FootLeft"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("HipRight"))
+            {
+                tr = getTransform("LeftUpLeg");
+            }
+            else if (joint.Name.Equals("KneeRight"))
+            {
+                tr = getTransform("");
+            }
+            else if (joint.Name.Equals("AnkleRight"))
+            {
+                tr = getTransform("");
+            }
+            else if(joint.Name.Equals("FootRight"))
+            {
+                tr = getTransform("");
+            }
+            if (tr != null)
+                tr.parent = bone.BoneMesh.transform;
+        }
+
+        Transform getTransform(String name)
+        {
+            if (shirt != null)
+            {
+                Transform ret = null;
+                foreach (Transform tr in shirt.transform)
+                {
+                    if (tr.name.Contains(name))
+                        return tr;
+                }
+            }
+            return null;
+        }
         /// <summary>
         /// apply transformations to the model
         /// </summary>

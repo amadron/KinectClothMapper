@@ -25,6 +25,11 @@ namespace JointOrientationBasics
 
         public BodySourceManager BodySourceManager;
         public bool MirrorJoints;
+        public static Windows.Kinect.KinectSensor _Sensor;
+
+        private static Camera cam;
+        private static float resFactorY;
+        private static float resFactorX;
 
         void Start()
         {
@@ -36,6 +41,10 @@ namespace JointOrientationBasics
                     this.BodySourceManager = objs[0];
                 }
             }
+            _Sensor = Windows.Kinect.KinectSensor.GetDefault();
+            cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+            resFactorY = (float)Screen.height / 1080;
+            resFactorX = (float)Screen.width / 1920;
         }
 
         void Update()
@@ -174,7 +183,7 @@ namespace JointOrientationBasics
                 // Helpers.DrawDebugQuaternion(rawPosition, rawRotation, Helpers.ColorRange.BW, .05f);
 
                 // adjust for camera
-                rawPosition = cameraRotation * rawPosition;
+                //rawPosition = cameraRotation * rawPosition;
                 rawRotation = cameraRotation * rawRotation;
 
                 // if this is a leaf bone, with no orientation
@@ -198,7 +207,6 @@ namespace JointOrientationBasics
                 // set the filtered joint property with the updates values
                 this.filteredJoint.Position = rawPosition;
                 this.filteredJoint.Rotation = rawRotation;
-
                 // filter the raw joint
                 this.filteredJoint = jointSmoother.UpdateJoint(jt.Value, this.filteredJoint, smoothingParams);
             
@@ -208,7 +216,7 @@ namespace JointOrientationBasics
 
             // calculate offsets from world position/rotation
             joint.CalculateOffset(cameraPosition, cameraRotation);
-
+            
             // continue through hierarchy
             if (joint.Children != null)
             {
@@ -217,6 +225,32 @@ namespace JointOrientationBasics
                     UpdateJoint(child, body, cameraPosition, cameraRotation);
                 }
             }
+        }
+
+        public static Vector3 MapToColor(Kinect.Joint joint)
+        {
+            //Joint Pos to Color Coordinates
+            Kinect.ColorSpacePoint colorPoint = _Sensor.CoordinateMapper.MapCameraPointToColorSpace(joint.Position);
+            if (float.IsInfinity(colorPoint.X))
+            {
+                colorPoint.X = 0;
+            }
+            if (float.IsInfinity(colorPoint.Y))
+            {
+                colorPoint.Y = 0;
+            }
+
+            Vector3 vec = new Vector3(colorPoint.X, colorPoint.Y, 0);
+            //Color Coordinates to actual Screensize/ Pos
+            vec.x *= resFactorX;
+            vec.y *= resFactorY;
+            //to do: actual ScreenPos to Viewport Pos
+            vec.x = vec.x / Screen.width;
+            vec.y = 1 - vec.y / Screen.height;
+            // Viewport Pos to 3d Space
+            vec.z = joint.Position.Z * 10;
+            vec = cam.ViewportToWorldPoint(vec);
+            return vec;
         }
 
         internal static Vector3 ConvertJointPositionToUnityVector3(Kinect.Body body, Kinect.JointType type, bool mirror = true)
@@ -230,7 +264,7 @@ namespace JointOrientationBasics
             {
                 position.x *= -1;
             }
-
+            position = MapToColor(body.Joints[type]);
             return position;
         }
 

@@ -91,6 +91,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\ColorScale.cs" />
+    <Compile Include="Assets\DepthColliderDemo\Scripts\DepthImageViewer.cs" />
+    <Compile Include="Assets\DepthColliderDemo\Scripts\EggMover.cs" />
+    <Compile Include="Assets\DepthColliderDemo\Scripts\EggSpawner.cs" />
+    <Compile Include="Assets\GesturesDemo\Scripts\GestureListener.cs" />
+    <Compile Include="Assets\GesturesDemo\Scripts\PresentationScript.cs" />
     <Compile Include="Assets\GreenScreen\Scripts\CoordinateMapperManager.cs" />
     <Compile Include="Assets\GreenScreen\Scripts\CoordinateMapperView.cs" />
     <Compile Include="Assets\JointOrientationBasics\Scripts\BodySourceManager.cs" />
@@ -101,6 +106,26 @@
     <Compile Include="Assets\JointOrientationBasics\Scripts\KinectSkeleton.cs" />
     <Compile Include="Assets\JointOrientationBasics\Scripts\KinectVisualizer.cs" />
     <Compile Include="Assets\JointOrientationBasics\Scripts\VisualSkeleton.cs" />
+    <Compile Include="Assets\KinectScripts\AvatarController.cs" />
+    <Compile Include="Assets\KinectScripts\AvatarControllerClassic.cs" />
+    <Compile Include="Assets\KinectScripts\Cubeman\CubemanController.cs" />
+    <Compile Include="Assets\KinectScripts\Filters\BoneOrientationsConstraint.cs" />
+    <Compile Include="Assets\KinectScripts\Filters\BoneOrientationsFilter.cs" />
+    <Compile Include="Assets\KinectScripts\Filters\ClippedLegsFilter.cs" />
+    <Compile Include="Assets\KinectScripts\Filters\JointPositionsFilter.cs" />
+    <Compile Include="Assets\KinectScripts\Filters\KinectHelper.cs" />
+    <Compile Include="Assets\KinectScripts\Filters\SelfIntersectionConstraint.cs" />
+    <Compile Include="Assets\KinectScripts\Filters\TimedLerp.cs" />
+    <Compile Include="Assets\KinectScripts\Filters\TrackingStateFilter.cs" />
+    <Compile Include="Assets\KinectScripts\KinectGestures.cs" />
+    <Compile Include="Assets\KinectScripts\KinectManager.cs" />
+    <Compile Include="Assets\KinectScripts\KinectWrapper.cs" />
+    <Compile Include="Assets\KinectScripts\Samples\FollowUserRotation.cs" />
+    <Compile Include="Assets\KinectScripts\Samples\GetJointPositionDemo.cs" />
+    <Compile Include="Assets\KinectScripts\Samples\LoadMainLevel.cs" />
+    <Compile Include="Assets\KinectScripts\Samples\MouseControl.cs" />
+    <Compile Include="Assets\KinectScripts\Samples\SetSceneAvatars.cs" />
+    <Compile Include="Assets\KinectScripts\Samples\SimpleGestureListener.cs" />
     <Compile Include="Assets\KinectView\Scripts\BodySourceManager.cs" />
     <Compile Include="Assets\KinectView\Scripts\BodySourceView.cs" />
     <Compile Include="Assets\KinectView\Scripts\ColorSourceManager.cs" />
@@ -289,6 +314,7 @@
     <Compile Include="Assets\Melting\Mega_Fiers\Mega-Fiers\Scripts\MegaGrab\DOFCamera.cs" />
     <Compile Include="Assets\Melting\Mega_Fiers\Mega-Fiers\Scripts\MegaGrab\JPGEncoder.cs" />
     <Compile Include="Assets\Melting\Mega_Fiers\Mega-Fiers\Scripts\MegaGrab\MegaGrab.cs" />
+    <Compile Include="Assets\OverlayDemo\Scripts\KinectOverlayer.cs" />
     <Compile Include="Assets\Scripts\HandSwitch.cs" />
   </ItemGroup>
   <ItemGroup>
