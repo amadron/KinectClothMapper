@@ -156,12 +156,15 @@ namespace JointOrientationBasics
 
             // get the floorClipPlace from the body information
             Vector4 floorClipPlane = Helpers.FloorClipPlane;
-
+            //floorClipPlane = Vector4.one;
             // get rotation of camera
             Quaternion cameraRotation = Helpers.CalculateFloorRotationCorrection(floorClipPlane);
 
             // generate a vertical offset from floor plane
-            Vector3 cameraPosition = Vector3.up * floorClipPlane.w;
+            //Vector3 cameraPosition = Vector3.up * floorClipPlane.w;
+            Vector3 cameraPosition = Vector3.zero;
+            //Debug.Log("CameraPosition:" + cameraPosition);
+            //cameraPosition = Vector3.zero;
 
             // visualize where the camera is
             // uncomment if you want to see the camera rotation visualized
@@ -202,7 +205,7 @@ namespace JointOrientationBasics
                 // adjust for camera
                 //rawPosition = cameraRotation * rawPosition;
                 rawRotation = cameraRotation * rawRotation;
-
+                
                 // if this is a leaf bone, with no orientation
                 if (Helpers.QuaternionZero.Equals(rawRotation) && joint.Parent != null)
                 {

@@ -411,14 +411,15 @@ namespace JointOrientationBasics
             if (tr != null)
             {
                 Vector3 offset = Vector3.zero;
-                if(joint.Name.Equals("Neck"))
+                Vector3 offsetRotation = Vector3.zero;
+                if (joint.Name.Equals("Neck"))
                 {
-                    offset.y = -1.1f;
+                    offset.y = -0.57f;
                 }
                 else if (joint.Name.Equals("ThumbLeft"))
                 {
                     MeshFilter filt = bone.BoneMesh.GetComponent<MeshFilter>();
-                    offset.y = filt.mesh.bounds.size.y * 2.39f;
+                    offset.y = filt.mesh.bounds.size.y * 3.8f;
                 }
                 else if(joint.Name.Equals("HandTipLeft"))
                 {
@@ -429,20 +430,39 @@ namespace JointOrientationBasics
                 {
                     offset.y = 0.2f;
                 }
+                else if (joint.Name.Equals("ElbowRight") || joint.Name.Equals("ElbowLeft"))
+                {
+                    offset.y = 1f;
+                    offsetRotation.y = 180f;
+                }
+                
+                else if (joint.Name.Equals("ShoulderRight"))
+                {
+                    offset.x = 0.6f;
+                    offset.y = 0.25f;
+                    offsetRotation.y = -90f;
+                }
+                else if (joint.Name.Equals("ShoulderLeft"))
+                {
+                    offset.x = -0.6f;
+                    offset.y = 0.25f;
+                    offsetRotation.y = 90f;
+                }
+                //offset.z = -0.5f;
                 Vector3 localPos = tr.localPosition;
                 tr.parent = bone.BoneMesh.transform;
                 //if(!joint.Name.Equals("ShoulderRight") || !joint.Name.Equals("ShoulderLeft"))
-                resetTransform(tr, offset);
+                resetTransform(tr, offset, offsetRotation);
                 //tr.localPosition = localPos;
                 
             }
             //Position of Spinebase
         }
 
-        void resetTransform(Transform tr, Vector3 offset)
+        void resetTransform(Transform tr, Vector3 offset, Vector3 rotationOffset)
         {
             tr.localPosition = Vector3.zero + offset;
-            tr.localRotation = Quaternion.identity;
+            tr.localRotation = Quaternion.Euler(rotationOffset);
         }
 
 
