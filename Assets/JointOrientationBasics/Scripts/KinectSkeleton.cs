@@ -22,7 +22,7 @@ namespace JointOrientationBasics
         private DoubleExponentialFilter jointSmoother;
         private DoubleExponentialFilter.TRANSFORM_SMOOTH_PARAMETERS smoothingParams;
         private DoubleExponentialFilter.Joint filteredJoint;
-
+        public String trackingId;
         public BodySourceManager BodySourceManager;
         public bool MirrorJoints;
         public static Windows.Kinect.KinectSensor _Sensor;
@@ -31,6 +31,7 @@ namespace JointOrientationBasics
         private static float resFactorY;
         private static float resFactorX;
 
+        
         void Start()
         {
             if (null == this.BodySourceManager)
@@ -50,13 +51,27 @@ namespace JointOrientationBasics
         void Update()
         {
             // Get the closest body
-            Kinect.Body body = this.BodySourceManager.GetClosestBody();
+            /*Kinect.Body body = this.BodySourceManager.GetClosestBody();
             if (null == body)
             {
                 return;
             }
+            UpdateJoints(body);*/
+            /*
+            Kinect.Body[] bodies = this.BodySourceManager.Bodies;
+            int c = 0;
+            if(bodies != null)
+                foreach(Kinect.Body b in bodies)
+                {
+                    if (b.IsTracked)
+                    {
+                       UpdateJoints(b);
+                        c++;
+                    }
+                }
+            Debug.Log("Bodies tracked:" + c);
+            */
             // update the skeleton with the new body joint/orientation information
-            UpdateJoints(body);
         }
 
         /// <summary>
@@ -112,6 +127,8 @@ namespace JointOrientationBasics
             GetJoint(Kinect.JointType.HandRight).AddChild(GetJoint(Kinect.JointType.HandTipRight));
             GetJoint(Kinect.JointType.WristRight).AddChild(GetJoint(Kinect.JointType.ThumbRight));
         }
+
+        
 
         internal Joint GetJoint(Kinect.JointType? type)
         {
@@ -230,6 +247,8 @@ namespace JointOrientationBasics
         public static Vector3 MapToColor(Kinect.Joint joint)
         {
             //Joint Pos to Color Coordinates
+            if (joint == null)
+                return new Vector3(0, 0, -1) ;
             Kinect.ColorSpacePoint colorPoint = _Sensor.CoordinateMapper.MapCameraPointToColorSpace(joint.Position);
             if (float.IsInfinity(colorPoint.X))
             {

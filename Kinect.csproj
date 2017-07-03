@@ -315,6 +315,7 @@
     <Compile Include="Assets\Melting\Mega_Fiers\Mega-Fiers\Scripts\MegaGrab\JPGEncoder.cs" />
     <Compile Include="Assets\Melting\Mega_Fiers\Mega-Fiers\Scripts\MegaGrab\MegaGrab.cs" />
     <Compile Include="Assets\OverlayDemo\Scripts\KinectOverlayer.cs" />
+    <Compile Include="Assets\Scripts\HandControl.cs" />
     <Compile Include="Assets\Scripts\HandSwitch.cs" />
   </ItemGroup>
   <ItemGroup>

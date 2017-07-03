@@ -11,13 +11,17 @@ namespace JointOrientationBasics
 
     using UnityEngine;
     using Kinect = Windows.Kinect;
+   
 
     public class BodySourceManager : MonoBehaviour
     {
         private Kinect.KinectSensor _sensor = null;
         private Kinect.BodyFrameReader _reader = null;
-
+        private List<String> trackedID;
         private Kinect.Body[] _bodies = null;
+        public GameObject pref;
+        Dictionary<ulong, GameObject> bodies;
+        public GameObject shirt;
         public Kinect.Body[] Bodies
         {
             get
@@ -34,7 +38,8 @@ namespace JointOrientationBasics
         void Start()
         {
             _sensor = Kinect.KinectSensor.GetDefault();
-
+            bodies = new Dictionary<ulong, GameObject>();
+            trackedID = new List<string>();
             if (_sensor != null)
             {
                 _reader = _sensor.BodyFrameSource.OpenReader();
@@ -110,6 +115,57 @@ namespace JointOrientationBasics
                     // may need to be transposed
                     correctionMatrix.m13 = floorClipPlane.w;
                     //correctionMatrix.m33 = floorClipPlane.w;
+                }
+                if (Bodies == null || Bodies.Length == 0)
+                    return;
+                List<ulong> uList = new List<ulong>();
+                foreach(KeyValuePair<ulong, GameObject> entry in bodies)
+                {
+                    uList.Add(entry.Key);
+                }
+                foreach(Kinect.Body b in Bodies)
+                {
+                    if(b.IsTracked)
+                    {
+                        uList.Remove(b.TrackingId);
+                        GameObject bObj = null;
+                        if(bodies.ContainsKey(b.TrackingId))
+                        {
+                            bObj = bodies[b.TrackingId];
+                            KinectVisualizer vis = bObj.GetComponent<KinectVisualizer>();
+                            vis.DrawBoneModel = true;
+                        }
+                        else
+                        {
+                            bObj = Instantiate(pref);
+                            KinectVisualizer vis = bObj.GetComponent<KinectVisualizer>();
+                            GameObject shirtObj = Instantiate(shirt);
+                            shirtObj.transform.parent = bObj.transform;
+                            vis.shirt = shirtObj;
+                            bObj.name = b.TrackingId.ToString();
+                            bodies.Add(b.TrackingId, bObj);
+                        }
+                        bObj.SetActive(true);
+                        KinectSkeleton skel = bObj.GetComponent<KinectSkeleton>();
+                        skel.UpdateJoints(b);
+                    }
+                    else
+                    {
+                        GameObject bod = GameObject.Find(b.TrackingId.ToString());
+                        Destroy(bod);
+                        GameObject sket = GameObject.Find(b.TrackingId.ToString() + "_Skeleton");
+                        Destroy(sket);
+                    }
+                    
+                                                
+                }
+                foreach(ulong u in uList)
+                {
+                    GameObject bObj = bodies[u];
+                    GameObject skelObj = GameObject.Find(bObj.name + "_Skeleton");
+                    Destroy(bObj);
+                    Destroy(skelObj);
+                    bodies.Remove(u);
                 }
             }
         }
